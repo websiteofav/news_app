@@ -59,36 +59,36 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
     super.initState();
 
     _pagingController.addPageRequestListener((page) async {
-      // if (_searchEditingController.text.trim().isEmpty) {
-      _preferences = await SharedPreferences.getInstance();
-      var countryCode = _preferences!.get('country_value');
+      if (_searchEditingController.text.trim().isEmpty) {
+        _pagingController.error = null;
+        _preferences = await SharedPreferences.getInstance();
+        var countryCode = _preferences!.get('country_value');
 
-      BlocProvider.of<NewsBloc>(context).add(
-        FetchHeadlinesByCountry(
-          countryCode: countryCode == null ? 'in' : countryCode.toString(),
-          resetPage: false,
-          page: page1,
-        ),
-      );
+        BlocProvider.of<NewsBloc>(context).add(
+          FetchHeadlinesByCountry(
+            countryCode: countryCode == null ? 'in' : countryCode.toString(),
+            resetPage: false,
+            page: page1,
+          ),
+        );
+      }
       // }
-      // else {
-      //   // _pagingController.error = FirstLoadErorr(
-      //   //   erroMessage: 'All articles found',
-      //   //   onRefresh: () {
-      //   //     _searchEditingController.text = '';
-      //   //     setState(() {});
-      //   //   },
-      //   // );
-      // }
+      else {
+        _pagingController.error = 'All articles found';
+      }
 
       // }
     });
 
     _allNewspagingController.addPageRequestListener((page) {
-      BlocProvider.of<NewsBloc>(context).add(
-        FetchAllNews(
-            countryCode: 'in'.toString(), resetPage: false, page: page2),
-      );
+      if (_searchEditingController.text.trim().isEmpty) {
+        BlocProvider.of<NewsBloc>(context).add(
+          FetchAllNews(
+              countryCode: 'in'.toString(), resetPage: false, page: page2),
+        );
+      } else {
+        _pagingController.error = 'All articles found';
+      }
 
       // }
     });
@@ -236,6 +236,10 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
       child: TextField(
         style: const TextStyle(fontWeight: FontWeight.bold, color: textColor1),
         onChanged: (value) {
+          if (value.trim().isEmpty) {
+            _pagingController.error = null;
+            _allNewspagingController.error == null;
+          }
           setState(() {});
         },
         controller: _searchEditingController,
@@ -337,7 +341,8 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
         listener: (context, state) {
           if (state is TopHeadlinesLoaded && _controller!.index == 0) {
             if (state.reset) {
-              _pagingController.itemList = [];
+              _pagingController.refresh();
+              page1 = 1;
             }
             _articlesLimit = state.model.totalResults >= 100
                 ? 100
