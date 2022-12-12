@@ -13,6 +13,7 @@ import 'package:newzzy/homepage/screens/news_card.dart';
 import 'package:newzzy/utils/colors.dart';
 import 'package:newzzy/utils/json_maps.dart';
 import 'package:newzzy/widgets/appbar.dart';
+import 'package:newzzy/widgets/contact.dart';
 import 'package:newzzy/widgets/first_load_error.indicator.dart';
 import 'package:newzzy/widgets/loading_overlay.dart';
 import 'package:newzzy/widgets/new_page_error.dart';
@@ -93,7 +94,7 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
       // }
     });
 
-    _controller = TabController(vsync: this, length: 3);
+    _controller = TabController(vsync: this, length: 4);
   }
 
   Future<String> _getCountryName() async {
@@ -142,7 +143,7 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
             SliverToBoxAdapter(
               child: DefaultTabController(
                 initialIndex: 1,
-                length: 3,
+                length: 4,
                 child: TabBar(
                   isScrollable: true,
                   unselectedLabelColor: textColor4,
@@ -170,6 +171,7 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
                       ),
                     ),
                     _headingWidget(title: 'Bookmarked'),
+                    _headingWidget(title: 'Contact Us'),
                   ],
                 ),
               ),
@@ -183,7 +185,8 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
                   children: [
                     _newListWidget(),
                     _newListWidget(),
-                    BookMarkedArticleList()
+                    BookMarkedArticleList(),
+                    ContactUs()
                   ],
                 ),
               ),
