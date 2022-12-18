@@ -60,7 +60,8 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
     super.initState();
 
     _pagingController.addPageRequestListener((page) async {
-      if (_searchEditingController.text.trim().isEmpty) {
+      if (_searchEditingController.text.trim().isEmpty &&
+          checkedSources.isEmpty) {
         _pagingController.error = null;
         _preferences = await SharedPreferences.getInstance();
         var countryCode = _preferences!.get('country_value');
@@ -140,6 +141,11 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
           physics: NeverScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(child: _searchTexfield()),
+            SliverToBoxAdapter(
+                child: Text(
+              '*Long press any article to bookmark it',
+              style: TextStyle(color: textColor2, fontSize: 15),
+            )),
             SliverToBoxAdapter(
               child: DefaultTabController(
                 initialIndex: 1,
@@ -346,6 +352,10 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
             if (state.reset) {
               _pagingController.refresh();
               page1 = 1;
+              newsSources = [];
+              checkedSources = [];
+              isChecked = [];
+              headlinemodel = null;
             }
             _articlesLimit = state.model.totalResults >= 100
                 ? 100
@@ -355,8 +365,6 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
                 ? headlinemodel = state.model
                 : headlinemodel!.articles.addAll(state.model.articles);
 
-            //      newsSources = [];
-            // checkedSources = [];
             headlinemodel!.articles.map((e) {
               if (!newsSources.contains(e.source!.name)) {
                 newsSources.add(e.source!.name.toString());
@@ -519,7 +527,7 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
             ]),
           ),
           Positioned.fill(
-            top: 300,
+            top: 280,
             // left: MediaQuery.of(context).size.width * 0.4,
             child: Container(
               alignment: Alignment.center,
@@ -530,6 +538,7 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
               ),
               // height: 20,
               // width: 100,
+              margin: EdgeInsets.only(bottom: 15),
               child: ElevatedButton(
                 onPressed: () {
                   FocusScope.of(context).unfocus();
@@ -545,7 +554,8 @@ class _NewsListState extends State<NewsList> with TickerProviderStateMixin {
                   });
                 },
                 style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(const Size(150, 50)),
+                    minimumSize:
+                        MaterialStateProperty.all(const Size(150, 100)),
                     backgroundColor: MaterialStateProperty.all(
                         Theme.of(context).primaryColor)),
                 child: const Text(

@@ -33,7 +33,7 @@ class _NewsCardState extends State<NewsCard> {
     return Container(
       // key: Key.(widget.model.url),
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      height: 150,
+      // height: 150,
       child: Card(
         elevation: 12,
         color: white,

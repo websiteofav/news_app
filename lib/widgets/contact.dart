@@ -51,7 +51,7 @@ class ContactUs extends StatelessWidget {
           height: 5,
         ),
         Text(
-          '7550169761',
+          '+917550169761',
           style: const TextStyle(
               color: textColor3, fontSize: 22, fontWeight: FontWeight.bold),
         ),
